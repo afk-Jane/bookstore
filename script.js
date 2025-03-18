@@ -172,19 +172,35 @@ let books = [
         }
       ]
     }
-  ]
+  ];
 
+  let showOnlyLikedBooks = false;
+
+  window.onload = function() {
+    loadFromLocalStorage(); 
+    renderBooks(); 
+
+    // let showLikedBooksBtn = document.getElementById("showLikedBooksBtn");
+    // showLikedBooksBtn.addEventListener("click", showLikedBooks);
+};
 
 function renderBooks (){
     let contentRef = document.getElementById('display-books');
     contentRef.innerHTML = '';
+
+    let filteredBooks = showOnlyLikedBooks ? books.filter(book => book.liked) : books;
     
-    for (let indexBook = 0; indexBook < books.length; indexBook++) {
-        contentRef.innerHTML += getBookTemplate(indexBook); 
-        liked(indexBook);
-        renderComments(indexBook);       
+    for (let indexBook = 0; indexBook < filteredBooks.length; indexBook++) {
+            contentRef.innerHTML += getBookTemplate(indexBook);
+            liked(indexBook);
+            renderComments(indexBook);
+    }
+    
+    for (let indexBook = 0; indexBook < filteredBooks.length; indexBook++) {
+        commentsEmpty(indexBook);
     }
 
+    saveToLocalStorage();
 }
 
 
@@ -194,68 +210,72 @@ function saveToLocalStorage() {
 
 
 function loadFromLocalStorage() {
-    books = JSON.parse(localStorage.getItem('books')) || books;
+    let savedBooks = JSON.parse(localStorage.getItem('books'));
+    if (savedBooks) {
+        books = savedBooks;
+    }
 }
 
 
 function getBookTemplate (indexBook){
- return /*html*/`
-    <div class="aBook" id="book${indexBook}">
-        <div class="book-title">
-            <h2>${books[indexBook].name}</h2>
-        </div>
-
-        <div class="fancy-line">
-        </div>
-
-        <div class="display-bookcover">
-            <img src="./img/book-icon.png" alt="book icon" class="book-icon">
-        </div>
-
-        <div class="fancy-line">
-        </div>
-
-        <div class="price-n-likes">
-            <p class="bookPrice" id="">${books[indexBook].price} €</p>
-            <div class="display-likes" id="">
-                <p class="likes" id="likes">${books[indexBook].likes}</p>
-                <div class="like" onclick="like(indexBook)">${liked(indexBook)}</div>
-            </div>
-        </div>
-
-        <div class="book-data" id="">
-            <div class="author-date">
-                <strong>Author:</strong>
-                <p class="author" id=""> ${books[indexBook].author}</p>
+    let formattedPrice = books[indexBook].price.toFixed(2);
+    return /*html*/`
+        <div class="aBook" id="book${indexBook}">
+            <div class="book-title">
+                <h2>${books[indexBook].name}</h2>
             </div>
 
-            <div class="publishedYear-data">
-                <strong>Erschienungsjahr:</strong>
-                <p class="publishedYear" id=""> ${books[indexBook].publishedYear}</p>
+            <div class="fancy-line">
             </div>
 
-            <div class="genre-data">
-                <strong>Genre:</strong>
-                <p class="genre" id=""> ${books[indexBook].genre}</p>
+            <div class="display-bookcover">
+                <img src="./img/book-icon.png" alt="book icon" class="book-icon">
             </div>
-        </div>
 
-        <div class="fancy-line">
-        </div>
+            <div class="fancy-line">
+            </div>
 
-        <div class="display-comments">
-            <h3>Kommentare:<br></h3>
-                <div class="prev-Comments" id="book${indexBook}comments">
+            <div class="all-data">
+                <div class="price-n-likes">
+                    <p class="bookPrice">${formattedPrice} €</p>
+                    <div class="display-likes">
+                        <p class="likes">${books[indexBook].likes}</p>
+                        <div class="like" id="heart${indexBook}" onclick="like(${indexBook})">${liked(indexBook)}</div>
+                    </div>
                 </div>
-                <div class="post-comment">
-                    <input type="text" id="newComment" placeholder="Schreibe deinen Kommentar...">
-                    <img src="./img/paper-airplane.png" class="send-icon" onclick="sendMessage()">
-                </div>
-        </div>
-    </div>
- `;
 
-}
+                <div class="book-data" id="">
+                    <div class="author-date">
+                        <p class="author" id=""> <strong>Author :</strong> ${books[indexBook].author}</p>
+                    </div>
+
+                    <div class="publishedYear-data">
+                        
+                        <p class="publishedYear" id=""> <strong>Erschienungsjahr :</strong> ${books[indexBook].publishedYear}</p>
+                    </div>
+
+                    <div class="genre-data">
+                    <p class="genre" id=""> <strong>Genre :</strong> ${books[indexBook].genre}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fancy-line">
+            </div>
+
+            <div class="display-comments">
+                <h3>Kommentare:<br></h3>
+                    <div class="prev-Comments" id="book${indexBook}comments">
+                    </div>
+                    <div class="post-comment">
+                    <input type="text" id="newComment${indexBook}" class="comment-intput" placeholder="Schreibe deinen Kommentar...">
+                        <img src="./img/paper-airplane.png" class="send-icon" onclick="sendMessage(${indexBook}, prompt('Wie ist dein Name?', 'Benutzer'))">
+                    </div>
+            </div>
+        </div>
+    `;
+    }
+
 
 function getPriceTemplate(indexBook) {
     let priceContentRef = books[indexBook].price;
@@ -273,29 +293,36 @@ function liked(indexBook) {
     }
 }
 
-function like(indexBook){
-    let likeContentRef = books[indexBook].liked;
 
-    if (likeContentRef === true){
-        let heartIdRef = document.getElementById('heart${indexBook}');
-        heartIdRef.setAttribute('src', './img/heart-empty.png')
+function like(indexBook) {
+    let likeContentRef = books[indexBook].liked;
+    let heartIdRef = document.getElementById(`heart${indexBook}`);
+    
+    if (likeContentRef === true) {
+        heartIdRef.setAttribute('src', './img/heart-empty.png');
+        books[indexBook].liked = false;  
+        books[indexBook].likes -= 1; 
     } else {
-        let heartIdRef = document.getElementById('heart${indexBook}');
-        heartIdRef.setAttribute('src', './img/heart-full.png')
+        heartIdRef.setAttribute('src', './img/heart-full.png');
+        books[indexBook].liked = true;  
+        books[indexBook].likes += 1; 
     }
+
+    saveToLocalStorage();  
+    renderBooks(); 
 }
 
 
 function getLikedTemplate(indexBook){
     return /*html*/`
-        <img src='./img/heart-full.png' class="haert" id="haert${indexBook}" alt="heart icon">
+        <img src='./img/heart-full.png' class="heart" id="heart${indexBook}" alt="heart icon">
     `;
 }
 
 
 function getNotLikedTemplate(indexBook){
     return /*html*/`
-        <img src='./img/heart-empty.png' class="haert" id="haert${indexBook}" alt="outline of a heart">
+        <img src='./img/heart-empty.png' class="heart" id="heart${indexBook}" alt="outline of a heart">
     `;
 }
 
@@ -317,7 +344,43 @@ function getCommentsTemplate(comment) {
 }
 
 
-function sendMessage() {
-    //wie machen mit username O.o -> dialog fenster diesmal wirklich als overlay
-    let message = document.getElementById('newComment').value;
+function commentsEmpty(indexBook) {
+    let commentContainer = document.getElementById(`book${indexBook}comments`);
+    
+    if (!books[indexBook].comments || books[indexBook].comments.length === 0) {
+        commentContainer.innerText = 'Keine Kommentare, schreib du den ersten...';
+    }
+}
+
+
+function askUsername(indexBook) {
+    let userName = prompt("Wie ist dein Name?", "Benutzer");
+
+    if (userName && userName.trim() !== "") {
+        sendMessage(indexBook, userName);
+    } else {
+        alert("Bitte gib deinen Namen ein.");
+    }
+}
+
+function sendMessage(indexBook, userName) {
+    let newCommentInput = document.getElementById(`newComment${indexBook}`); 
+    if (newCommentInput.value.trim() !== "") {
+        let newComment = {
+            name: userName,
+            comment: newCommentInput.value
+        };
+
+        books[indexBook].comments.push(newComment);
+        renderComments(indexBook);
+        saveToLocalStorage();
+        newCommentInput.value = ""; 
+    } else {
+        alert("Bitte gib einen Kommentar ein.");
+    }
+}
+
+function showLikedBooks() {
+    showOnlyLikedBooks = !showOnlyLikedBooks; 
+    renderBooks();
 }

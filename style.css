@@ -1,10 +1,14 @@
-body {
+body, html {
     margin: 0;
     padding: 0;
     font-family: 'Raleway', serif;
     background-color: #071820;
     color: whitesmoke;
     width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
 }
 
 @font-face {
@@ -16,11 +20,20 @@ header{
     width: 100%;
     height: 96px;
     background-color: #0a222c;
-    padding-left: 32px;
+    padding: 0 32px;
+    display: flex;
+    justify-content: space-between;   
+}
+
+.name-n-logo{
     display: flex;
     justify-content: start;
     align-items: center;
     gap: 12px;
+}
+
+.showLikedBooksBtn{
+    
 }
 
 h1{
@@ -31,32 +44,59 @@ h1{
     width: 44px;
 }
 
-.content{
+.content {
+    max-width: 1200px;
     display: flex;
     justify-content: center;
     width: 100%;
+    margin: 0 auto;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
-.display-books{ 
+div#display-books {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-around;
     gap: 32px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 32px 0;
 }
 
-.aBook{
+.aBook {
     background-color: #0f3340;
-    margin-top: 32px;
-    margin-bottom: 32px;
     border-radius: 25px;
-    width: 50%;
+    width: 30%; 
+    min-width: 300px;
+    max-width: 350px;
+    height: 640px;
     padding-bottom: 12px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .aBook {
+        width: 45%; 
+    }
+}
+
+@media (max-width: 768px) {
+    .aBook {
+        width: 100%; 
+    }
 }
 
 .book-title{
     display: flex;
     justify-content: center;
     padding: 8px;
+    height: 12.5%;
+    box-sizing: border-box;
 }
 
 .fancy-line{
@@ -69,10 +109,13 @@ h1{
     box-shadow: 0px 0px 32px 33px rgba(0,0,0,0.2) inset;
     display: flex;
     justify-content: center;
+    height: 25%;
+    box-sizing: border-box;
 }
 
 .book-icon{
     width: 128px;
+    height: 150px;
 }
 
 .bookPrice{
@@ -84,7 +127,9 @@ h1{
 .price-n-likes{
     display: flex;
     justify-content: space-between;
-    padding: 16px 32px;
+    align-items: center;
+    padding: 0 24px;
+    box-sizing: border-box;
 }
 
 .display-likes{
@@ -94,11 +139,11 @@ h1{
     gap: 8px;
 }
 
-.haert{
+.heart{
     width: 48px;  
 }
 
-.haert:hover{
+.heart:hover{
     width: 56px;
 
 }
@@ -107,16 +152,37 @@ h1{
     cursor: pointer;
 }
 
+.all-data{
+    padding: 12px 0;
+}
+
 .book-data{
-    padding: 8px 32px;
+    padding: 0 24px;
+    box-sizing: border-box;
 }
 
 .display-comments{
-    padding: 8px 32px;
+    padding: 0 24px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.display-comments::-webkit-scrollbar {
+    width: 8px;
+}
+
+.display-comments::-webkit-scrollbar-thumb {
+    background-color: #47636d;
+    border-radius: 4px;
 }
 
 .prev-Comments{
-    max-height: 20%;
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 8px;
+    padding-right: 8px;
+    font-size: 14px;
+    min-height: 64px;
 }
 
 .post-comment{
@@ -124,9 +190,11 @@ h1{
     align-items: center;
     gap: 12px;
     padding: 4px 0;
+    height: 12.5%;
+    box-sizing: border-box;
 }
 
-#newComment{
+.comment-intput{
     background-color: #143742;
     color: #47636d;
     outline: 0;
@@ -142,13 +210,38 @@ h1{
 
 .send-icon:hover{
     cursor: pointer;
-    width: 40px;
+    width: 36px;
 }
 
+#top {
+    display: block;
+    height: 1px; 
+  }
 
+footer h3{
+    color: #f16656;
+    font-size: 24px;
+}
+
+.mini-logo{
+    width: 32px;
+}
+
+footer a{
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
 
 footer{
-    height: 64px;
+    height: auto;
     width: 100%;
     background-color: #0a222c;
+    margin-bottom: 0;
+}
+
+footer:hover{
+    cursor: pointer;
 }
