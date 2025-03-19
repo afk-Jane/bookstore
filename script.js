@@ -174,7 +174,12 @@ let books = [
     }
   ];
 
+
   let showOnlyLikedBooks = false;
+
+
+  let likedBooks = [];
+
 
   window.onload = function() {
     loadFromLocalStorage(); 
@@ -183,6 +188,7 @@ let books = [
     // let showLikedBooksBtn = document.getElementById("showLikedBooksBtn");
     // showLikedBooksBtn.addEventListener("click", showLikedBooks);
 };
+
 
 function renderBooks (){
     let contentRef = document.getElementById('display-books');
@@ -381,6 +387,13 @@ function sendMessage(indexBook, userName) {
 }
 
 function showLikedBooks() {
-    showOnlyLikedBooks = !showOnlyLikedBooks; 
+    let isBookLiked =
+    let likedBooks = books.filter(getLikedBooks);
+
+
     renderBooks();
+}
+
+function getLikedBooks() {
+    return
 }
